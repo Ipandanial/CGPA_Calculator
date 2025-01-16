@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPA Calculator</title>
     <style>
-        /* General Styling */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f9;
@@ -15,145 +14,107 @@
         header {
             background-color: #4CAF50;
             color: white;
+            padding: 20px 0;
             text-align: center;
-            padding: 20px;
-            position: relative;
-            z-index: 10;
+            font-size: 24px;
+            font-weight: bold;
         }
         main {
-            margin: 20px auto;
             padding: 20px;
             max-width: 800px;
-            background: white;
+            margin: 0 auto;
+            background-color: white;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 5;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        h1 {
-            margin: 0;
-        }
-
-        /* Form Styling */
-        form {
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin: 20px 0;
         }
-        .subject-input {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 10px;
+        table, th, td {
             border: 1px solid #ddd;
-            border-radius: 6px;
-            background: #f9f9f9;
         }
-        .subject-input label {
-            flex: 2;
-            min-width: 150px;
-        }
-        .subject-input button {
-            flex: 1;
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
+        th, td {
+            padding: 10px;
             text-align: center;
-            transition: background-color 0.3s ease;
         }
-        .subject-input button:hover {
-            background-color: #e53935;
-        }
-        label input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        /* Buttons */
-        button {
+        button, .delete-btn {
+            margin: 10px 0;
             padding: 10px 20px;
-            margin-top: 10px;
-            margin-right: 10px;
             background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            border-radius: 4px;
         }
-        button:hover {
+        button:hover, .delete-btn:hover {
             background-color: #45a049;
         }
-
-        /* Results Styling */
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            font-size: 14px;
+            display: inline-block;
+            line-height: 1;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
         .result {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 6px;
-            background-color: #f0f9ff;
-            border: 1px solid #d0e7ff;
-            color: #333;
-        }
-        .result p {
-            margin: 5px 0;
-            font-size: 18px;
-        }
-
-        /* Footer */
-        footer {
+            font-weight: bold;
             margin-top: 20px;
             text-align: center;
-            font-size: 14px;
-            color: #666;
+        }
+        .flex-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .flex-row input {
+            flex: 1;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>GPA Calculator</h1>
+        GPA Calculator
     </header>
     <main>
-        <h2>Enter Your Details</h2>
         <form id="gpaForm">
             <div id="subjectInputs">
-                <div class="subject-input">
-                    <label>Subject Name: <input type="text" name="subjectName" required></label>
-                    <label>Credit Hours: <input type="number" name="creditHours" min="1" max="4" required></label>
+                <div class="flex-row">
+                    <label>Subject: <input type="text" name="subjectName" required></label>
+                    <label>Credits: <input type="number" name="creditHours" min="1" max="4" required></label>
                     <label>Score: <input type="number" name="score" min="0" max="100" required></label>
-                    <button type="button" onclick="deleteSubject(this)">Delete</button>
+                    <button type="button" class="delete-btn" onclick="deleteSubject(this)">-</button>
                 </div>
             </div>
-            <button type="button" onclick="addSubject()">Add Another Subject</button>
+            <button type="button" onclick="addSubject()">Add Subject</button>
             <button type="button" onclick="calculateGPA()">Calculate GPA</button>
         </form>
         <div class="result" id="result"></div>
     </main>
-    <footer>
-        <p>&copy; 2025 GPA Calculator. All rights reserved.</p>
-    </footer>
 
     <script>
         function addSubject() {
             const subjectInputs = document.getElementById('subjectInputs');
             const div = document.createElement('div');
-            div.className = 'subject-input';
+            div.classList.add('flex-row');
             div.innerHTML = `
-                <label>Subject Name: <input type="text" name="subjectName" required></label>
-                <label>Credit Hours: <input type="number" name="creditHours" min="1" max="4" required></label>
+                <label>Subject: <input type="text" name="subjectName" required></label>
+                <label>Credits: <input type="number" name="creditHours" min="1" max="4" required></label>
                 <label>Score: <input type="number" name="score" min="0" max="100" required></label>
-                <button type="button" onclick="deleteSubject(this)">Delete</button>
+                <button type="button" class="delete-btn" onclick="deleteSubject(this)">-</button>
             `;
             subjectInputs.appendChild(div);
         }
 
         function deleteSubject(button) {
-            const subjectDiv = button.parentElement;
-            subjectDiv.remove();
+            button.parentElement.remove();
         }
 
         function calculateGPA() {
