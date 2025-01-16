@@ -36,6 +36,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
+            align-items: center;
             margin-bottom: 10px;
             padding: 10px;
             border: 1px solid #ddd;
@@ -45,6 +46,18 @@
         .subject-input label {
             flex: 1;
             min-width: 150px;
+        }
+        .subject-input button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .subject-input button:hover {
+            background-color: #e53935;
         }
         label input {
             width: 100%;
@@ -98,6 +111,7 @@
                     <label>Subject Name: <input type="text" name="subjectName" required></label>
                     <label>Credit Hours: <input type="number" name="creditHours" min="1" max="4" required></label>
                     <label>Score: <input type="number" name="score" min="0" max="100" required></label>
+                    <button type="button" onclick="deleteSubject(this)">Delete</button>
                 </div>
             </div>
             <button type="button" onclick="addSubject()">Add Another Subject</button>
@@ -118,8 +132,14 @@
                 <label>Subject Name: <input type="text" name="subjectName" required></label>
                 <label>Credit Hours: <input type="number" name="creditHours" min="1" max="4" required></label>
                 <label>Score: <input type="number" name="score" min="0" max="100" required></label>
+                <button type="button" onclick="deleteSubject(this)">Delete</button>
             `;
             subjectInputs.appendChild(div);
+        }
+
+        function deleteSubject(button) {
+            const subjectDiv = button.parentElement;
+            subjectDiv.remove();
         }
 
         function calculateGPA() {
