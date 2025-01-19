@@ -62,10 +62,9 @@
         .delete-btn:hover {
             background-color: #d32f2f;
         }
-        .result {
-            font-weight: bold;
+        .result-table {
+            display: none;
             margin-top: 20px;
-            text-align: center;
         }
     </style>
 </head>
@@ -81,7 +80,6 @@
                         <th>Subject</th>
                         <th>Credits</th>
                         <th>Grade</th>
-                        <th>Pointer</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -91,7 +89,24 @@
             <button type="button" onclick="addSubject()">Add Subject</button>
             <button type="button" onclick="calculateGPA()">Calculate GPA</button>
         </form>
-        <div class="result" id="result"></div>
+
+        <!-- Table to display GPA calculation results -->
+        <table id="resultTable" class="result-table">
+            <thead>
+                <tr>
+                    <th>Total Quality Points</th>
+                    <th>Total Credits</th>
+                    <th>Your GPA</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="totalQualityPoints"></td>
+                    <td id="totalCredits"></td>
+                    <td id="gpa"></td>
+                </tr>
+            </tbody>
+        </table>
     </main>
 
     <script>
@@ -118,7 +133,6 @@
                         <option value="0.0">E</option>
                     </select>
                 </td>
-                <td class="pointer">0.00</td>
                 <td><button type="button" class="delete-btn" onclick="deleteSubject(this)">Delete</button></td>
             `;
 
@@ -127,7 +141,6 @@
 
         function deleteSubject(button) {
             button.parentElement.parentElement.remove();
-            calculateGPA();
         }
 
         function calculateGPA() {
@@ -139,27 +152,25 @@
             rows.forEach(row => {
                 const credits = row.querySelector('input[name="creditHours"]').value;
                 const grade = row.querySelector('select[name="grade"]').value;
-                const pointerCell = row.querySelector('.pointer');
 
                 if (credits && grade) {
                     const creditValue = parseFloat(credits);
                     const gradeValue = parseFloat(grade);
-                    const pointer = creditValue * gradeValue;
 
-                    pointerCell.textContent = pointer.toFixed(2);
-
-                    totalQualityPoints += pointer;
+                    totalQualityPoints += creditValue * gradeValue;
                     totalCredits += creditValue;
                 }
             });
 
             const gpa = totalCredits > 0 ? totalQualityPoints / totalCredits : 0;
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = `
-                <p>Total Quality Points: ${totalQualityPoints.toFixed(2)}</p>
-                <p>Total Credits: ${totalCredits}</p>
-                <p>Your GPA: ${gpa.toFixed(2)}</p>
-            `;
+
+            // Update the results table
+            document.getElementById('totalQualityPoints').textContent = totalQualityPoints.toFixed(2);
+            document.getElementById('totalCredits').textContent = totalCredits;
+            document.getElementById('gpa').textContent = gpa.toFixed(2);
+
+            // Show the results table
+            document.getElementById('resultTable').style.display = 'table';
         }
     </script>
 </body>
