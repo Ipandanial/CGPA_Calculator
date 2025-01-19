@@ -39,7 +39,7 @@
             padding: 10px;
             text-align: center;
         }
-        button, .delete-btn {
+        button {
             margin: 10px 0;
             padding: 10px 20px;
             background-color: #4CAF50;
@@ -48,17 +48,16 @@
             cursor: pointer;
             border-radius: 4px;
         }
-        button:hover, .delete-btn:hover {
+        button:hover {
             background-color: #45a049;
         }
         .delete-btn {
             background-color: #f44336;
             color: white;
             padding: 5px 10px;
-            font-size: 14px;
-            display: inline-block;
-            line-height: 1;
+            border: none;
             cursor: pointer;
+            border-radius: 4px;
         }
         .delete-btn:hover {
             background-color: #d32f2f;
@@ -68,18 +67,6 @@
             margin-top: 20px;
             text-align: center;
         }
-        .flex-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .flex-row input, .flex-row select {
-            flex: 1;
-        }
-        .flex-row input[name="creditHours"] {
-            width: 150px; /* Increase the width of the credit box */
-        }
     </style>
 </head>
 <body>
@@ -88,29 +75,19 @@
     </header>
     <main>
         <form id="gpaForm">
-            <div id="subjectInputs">
-                <div class="flex-row">
-                    <label>Subject: <input type="text" name="subjectName" placeholder="Enter subject" required></label>
-                    <label>Credits: <input type="number" name="creditHours" placeholder="Enter credits" min="1" max="4" required></label>
-                    <label>Grade: 
-                        <select name="grade" required>
-                            <option value="" disabled selected>Select grade</option>
-                            <option value="4.0">A</option>
-                            <option value="3.7">A-</option>
-                            <option value="3.3">B+</option>
-                            <option value="3.0">B</option>
-                            <option value="2.7">B-</option>
-                            <option value="2.3">C+</option>
-                            <option value="2.0">C</option>
-                            <option value="1.7">C-</option>
-                            <option value="1.3">D+</option>
-                            <option value="1.0">D</option>
-                            <option value="0.0">E</option>
-                        </select>
-                    </label>
-                    <button type="button" class="delete-btn" onclick="deleteSubject(this)">-</button>
-                </div>
-            </div>
+            <table id="subjectsTable">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Credits</th>
+                        <th>Grade</th>
+                        <th>Pointer</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="subjectRows">
+                </tbody>
+            </table>
             <button type="button" onclick="addSubject()">Add Subject</button>
             <button type="button" onclick="calculateGPA()">Calculate GPA</button>
         </form>
@@ -119,13 +96,13 @@
 
     <script>
         function addSubject() {
-            const subjectInputs = document.getElementById('subjectInputs');
-            const div = document.createElement('div');
-            div.classList.add('flex-row');
-            div.innerHTML = `
-                <label>Subject: <input type="text" name="subjectName" placeholder="Enter subject" required></label>
-                <label>Credits: <input type="number" name="creditHours" placeholder="Enter credits" min="1" max="4" required></label>
-                <label>Grade: 
+            const tableBody = document.getElementById('subjectRows');
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td><input type="text" name="subjectName" placeholder="Enter subject" required></td>
+                <td><input type="number" name="creditHours" placeholder="Enter credits" min="1" max="4" required></td>
+                <td>
                     <select name="grade" required>
                         <option value="" disabled selected>Select grade</option>
                         <option value="4.0">A</option>
@@ -140,32 +117,43 @@
                         <option value="1.0">D</option>
                         <option value="0.0">E</option>
                     </select>
-                </label>
-                <button type="button" class="delete-btn" onclick="deleteSubject(this)">-</button>
+                </td>
+                <td class="pointer">0.00</td>
+                <td><button type="button" class="delete-btn" onclick="deleteSubject(this)">Delete</button></td>
             `;
-            subjectInputs.appendChild(div);
+
+            tableBody.appendChild(row);
         }
 
         function deleteSubject(button) {
-            button.parentElement.remove();
+            button.parentElement.parentElement.remove();
+            calculateGPA();
         }
 
         function calculateGPA() {
-            const form = document.getElementById('gpaForm');
-            const grades = form.querySelectorAll('select[name="grade"]');
-            const creditHours = form.querySelectorAll('input[name="creditHours"]');
+            const tableBody = document.getElementById('subjectRows');
+            const rows = tableBody.querySelectorAll('tr');
             let totalQualityPoints = 0;
             let totalCredits = 0;
 
-            for (let i = 0; i < grades.length; i++) {
-                const gradePoint = parseFloat(grades[i].value);
-                const credits = parseInt(creditHours[i].value);
+            rows.forEach(row => {
+                const credits = row.querySelector('input[name="creditHours"]').value;
+                const grade = row.querySelector('select[name="grade"]').value;
+                const pointerCell = row.querySelector('.pointer');
 
-                totalQualityPoints += gradePoint * credits;
-                totalCredits += credits;
-            }
+                if (credits && grade) {
+                    const creditValue = parseFloat(credits);
+                    const gradeValue = parseFloat(grade);
+                    const pointer = creditValue * gradeValue;
 
-            const gpa = totalQualityPoints / totalCredits;
+                    pointerCell.textContent = pointer.toFixed(2);
+
+                    totalQualityPoints += pointer;
+                    totalCredits += creditValue;
+                }
+            });
+
+            const gpa = totalCredits > 0 ? totalQualityPoints / totalCredits : 0;
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = `
                 <p>Total Quality Points: ${totalQualityPoints.toFixed(2)}</p>
