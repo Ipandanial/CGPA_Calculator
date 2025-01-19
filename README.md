@@ -1,1 +1,1 @@
-#CGPA_Calculator
+#GPA_Calculator
